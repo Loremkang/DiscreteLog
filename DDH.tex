@@ -1,7 +1,7 @@
 \section{The security of ElGamal}
 
-在本章节中，我们分析 ElGamal 公钥加密算法的 IND-CPA 安全性，并说明
-直接在模 P 循环群上使用 ElGamal 公钥加密算法将导致不安全。最后我们将提出
+在本章节中，我们首先介绍 IND-CPA 安全性，之后给出 ElGamal 的 IND-CPA 安全性的等价问题，并说明
+直接在模 P 循环群上使用 ElGamal 公钥加密算法将导致 IND-CPA 不安全。最后我们将提出
 一种方式使得 ElGamal 公钥加密算法满足 IND-CPA 安全性。
 
 \subsection{IND-CPA 安全性}
@@ -22,8 +22,28 @@ IND-CPA 是一种对加密算法安全性的描述，满足 IND-CPA 要求的加
 
 \subsection{DDH 问题}
 
+在 ElGamal 的 IND-CPA 证明中，攻击者可以获得的信息包括： $\{P_k, P_r, M_0, M_1, C_b\}$，其中 $P_k = \alpha^k$ 是公钥，$P_r = \alpha^r$ 是加密使用的随机幂。要判断 $C_b$ 来自哪个明文，攻击者可以对两个密文分别计算 $M_x^{-1}C_b$ ，并判断其是否等于 $\alpha^{rk}$，若等于则 $b=x$。我们将这个判断问题简化为下述 DDH 问题：
 
+\begin{theorem}
+	给定循环群 $G$ 及其生成元 $\alpha$。给出 $\alpha, \alpha^a, \alpha^b, \alpha^c$，其中 $a, b$ 从 $Z_t$ 中独立随机选择，$c$ 通过下面两种方式产生：$c = ab$ 或从 $Z_t$ 中随机选择。判断 $c$ 是通过哪种方式产生的。
+\end{theorem}
 
-\subsection{ElGamal 公钥加密算法的 IND-CPA 攻击}
+不难发现，如果我们可以以一定的概率估计 $\alpha^c$ 是否等于 $\alpha^{ab}$，我们就能对 ElGamal 的 IND-CPA 安全性进行攻击。
+
+\subsection{模 P 循环群上 ElGamal 公钥加密算法的 IND-CPA 攻击}
+
+对模 P 循环群及其生成元 $\alpha$，有下列引理存在：
+
+\begin{lemma}
+	$(\alpha^i)^{(P-1)/2} \equiv \pm 1 (mod P)$
+\end{lemma}
+
+\begin{proof}
+	$((\alpha^i)^{(P-1)/2})^2 = (\alpha^{P-1})^i \equiv 1 (mod P)$。而 $X^2 \equiv 1 (mod P)$ 对质数 $P$ 只有两个解，则他们是 $\pm 1$。
+\end{proof}
+
+由于上述引理存在，在判断 $\alpha^c = \alpha^{ab}$ 是否成立时，我们可以通过分别计算 $(\alpha^a)^{(P-1)/2}$, $(\alpha^b)^{(P-1)/2}$, $(\alpha^c)^{(P-1)/2}$ 获得 $a, b, c$ 的奇偶性，从而对结果有所估计。
+
+除了 $(P-1)/2$ 可以用于进行域的收缩外，对任意 $K \ge 2$，$(P-1)/k$ 均可以用于进行数域的收缩。
 
 \subsection{改进的 ElGamal 公钥加密算法}
